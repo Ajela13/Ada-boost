@@ -59,7 +59,24 @@ df_2=pd.get_dummies(df)
 encoded=list(df_2.columns)
 print(encoded)
 
-#dropping extra variables
+#dropping extra variables, remember in categorial variables we need to have n-1 variables
 df_2=df_2.drop(['salary_medium'],axis=1)
 df_2=df_2.drop(['sales_technical'],axis=1)
 df_2.head()
+
+#splitting data into test and train fitting the model
+Y=df_2.pop('left')
+X=df_2
+
+X_train,X_test,y_train,y_test=train_test_split(X,Y, test_size=0.3,random_state=42)
+print('Training set has {} samples'.format(X_train.shape[0]))
+print('Testing set has {} samples'.format(X_test.shape[0]))
+
+ada_boost_model=AdaBoostClassifier(DecisionTreeClassifier(),n_estimators=20,random_state=100)
+ada_boost_model.fit(X_train,y_train)
+pred_train=(ada_boost_model.predict(X_train))
+pred_test=(ada_boost_model.predict(X_test))
+
+print('Accuracy score on training data:{:.4f}'.format(accuracy_score(y_train,pred_train)))
+print('Accuracy score on training data:{:.4f}'.format(accuracy_score(y_test,pred_test)))
+
